@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1 # идентификатор набора изменений
+      author: developer # имя разработчика, который добавил набор изменений
+      changes: # список изменений в этом наборе
+        - createTable: # команда liquibase — создает таблицу
+            tableName: Lot # название таблицы
+            columns: # колонки к данной таблице
+              - column: # колонка
+                  name: id # название колонки
+                  type: Long; # тип
+                  autoIncrement: true # признак автоинкремента колонки
+                  constraints: # ограничения колонки
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: startPrice
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currentPrice
+                  type: double
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: Bid
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: bidAmount
+                  type: double
+                  constraints:
+                    nullable: false
