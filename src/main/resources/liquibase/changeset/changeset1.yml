@@ -28,7 +28,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createTable:
-            tableName: Bid
+            tableName: bid
             columns:
               - column:
                   name: id

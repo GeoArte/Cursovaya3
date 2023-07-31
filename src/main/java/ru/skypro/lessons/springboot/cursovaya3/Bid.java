@@ -3,7 +3,7 @@ package ru.skypro.lessons.springboot.cursovaya3;
 import jakarta.persistence.*;
 
 @Entity
-public class Bid {
+@Table(name = "bid")public class Bid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
