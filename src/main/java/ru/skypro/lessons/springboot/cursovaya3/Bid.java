@@ -11,7 +11,7 @@ import jakarta.persistence.*;
     @ManyToOne
     private Lot lot;
 
-    @Column(name = "bidAmount")
+    @Column(name = "bidamount")
     private double bidAmount;
 
     public Long getId() {

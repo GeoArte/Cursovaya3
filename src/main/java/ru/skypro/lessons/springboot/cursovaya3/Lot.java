@@ -3,7 +3,7 @@ package ru.skypro.lessons.springboot.cursovaya3;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Lot")public class Lot {
+@Table(name = "lot")public class Lot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,6 +14,8 @@ import jakarta.persistence.*;
     private double startPrice;
     @Column(name = "currentPrice")
     private double currentPrice;
+    @Column(name = "status")
+    private String status;
 
     public double getStartPrice() {
         return startPrice;

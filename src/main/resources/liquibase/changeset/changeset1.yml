@@ -4,7 +4,7 @@ databaseChangeLog:
       author: developer # имя разработчика, который добавил набор изменений
       changes: # список изменений в этом наборе
         - createTable: # команда liquibase — создает таблицу
-            tableName: Lot # название таблицы
+            tableName: lot # название таблицы
             columns: # колонки к данной таблице
               - column: # колонка
                   name: id # название колонки
@@ -18,13 +18,18 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: startPrice
+                  name: start_price
                   type: double
                   constraints:
                     nullable: false
               - column:
-                  name: currentPrice
+                  name: current_price
                   type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(20)
                   constraints:
                     nullable: false
         - createTable:
@@ -32,7 +37,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: int
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
@@ -41,3 +46,9 @@ databaseChangeLog:
                   type: double
                   constraints:
                     nullable: false
+              - column:
+                  name: lot_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_key_lot
+                    references: lot(id)
