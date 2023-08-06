@@ -7,13 +7,13 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface LotRepository extends JpaRepository<Lot, Long> {
-    List<Lot> findByStatus(String status);
+    List<Lot> findAll();
 
-    List<Lot> findByCurrentPriceGreaterThan(double minCurrentPrice);
+    // Метод для получения лотов по статусу
+    List<Lot> findAllByStatus(String status);
 
-    List<Lot> findByCurrentPriceBetween(double minCurrentPrice, double maxCurrentPrice);
-
-    List<Lot> findByNameContainingIgnoreCase(String keyword);
+    // Метод для получения лота по ID
+    Lot findById(long id);
 
     @Query(value = "SELECT COUNT(*) FROM Bid WHERE lot_id = :lotId", nativeQuery = true)
     int countBidsByLotId(@Param("lotId") Long lotId);

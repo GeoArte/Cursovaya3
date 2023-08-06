@@ -3,8 +3,13 @@ package ru.skypro.lessons.springboot.cursovaya3;
 import java.util.List;
 
 public interface AuctionService {
-    LotDTO createLot(LotDTO lotDTO);
-    LotDTO placeBid(Long lotId, double bidAmount);
-    List<LotDTO> getAllLots();
-    List<LotDTO> getLotsWithBids();
+    Lot createLot(Lot lot);
+    Bid placeBid(Long lotId, Bid bid);
+    void startBidding(Long lotId);
+    void finishBidding(Long lotId);
+    List<Lot> getAllLots();
+    Lot getLotById(Long lotId);
+    List<Lot> getLotsByStatus(String status);
+    List<Bid> getAllBids();
+    Bid getBidById(Long bidId);
 }

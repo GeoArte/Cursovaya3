@@ -2,6 +2,9 @@ package ru.skypro.lessons.springboot.cursovaya3;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "lot")public class Lot {
     @Id
@@ -16,6 +19,8 @@ import jakarta.persistence.*;
     private double currentPrice;
     @Column(name = "status")
     private String status;
+    @OneToMany(mappedBy = "lot", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bid> bids = new ArrayList<>();
 
     public double getStartPrice() {
         return startPrice;
@@ -43,5 +48,21 @@ import jakarta.persistence.*;
 
     public void setCurrentPrice(double currentPrice) {
         this.currentPrice = currentPrice;
+    }
+
+    public List<Bid> getBids() {
+        return bids;
+    }
+
+    public void setBids(List<Bid> bids) {
+        this.bids = bids;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

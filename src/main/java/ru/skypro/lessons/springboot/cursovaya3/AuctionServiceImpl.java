@@ -1,10 +1,10 @@
 package ru.skypro.lessons.springboot.cursovaya3;
 
-import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuctionServiceImpl implements AuctionService {
@@ -17,58 +17,92 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public LotDTO createLot(LotDTO lotDTO) {
-        Lot lot = new Lot();
-        lot.setName(lotDTO.getName());
-        lot.setStartPrice(lotDTO.getStartPrice());
+    public Lot createLot(Lot lot) {
+        // Проверяем, что стартовая цена не отрицательная
+        if (lot.getStartPrice() < 0) {
+            throw new IllegalArgumentException("Стартовая цена должна быть положительной.");
+        }
 
-        Lot savedLot = lotRepository.save(lot);
+        // Устанавливаем статус "Создан" для нового лота
+        lot.setStatus("Создан");
 
-        return mapToLotDTO(savedLot);
+        return lotRepository.save(lot);
     }
 
     @Override
-    public LotDTO placeBid(Long lotId, double bidAmount) {
-        Lot lot = lotRepository.findById(lotId)
-                .orElseThrow(() -> {
-                    return new NotFoundException("Lot not found with id: " + lotId);
-                });
+    public Bid placeBid(Long lotId, Bid bid) {
+        // Получаем лот по ID
+        Lot lot = getLotById(lotId);
 
-        Bid bid = new Bid();
+        // Проверяем, что ставка больше текущей цены лота
+        Double currentPrice = lot.getCurrentPrice();
+        if (currentPrice != null && bid.getBidAmount() <= 0) {
+            throw new IllegalArgumentException("Ставка должна быть выше текущей цены лота.");
+        }
+
+        // Устанавливаем лот для ставки
         bid.setLot(lot);
-        bid.setBidAmount(bidAmount);
 
+        // Сохраняем ставку и обновляем текущую цену лота
         bidRepository.save(bid);
+        lot.setCurrentPrice(bid.getBidAmount());
 
-        List<Bid> bids = bidRepository.findByLot(lot);
-        double currentPrice = bids.stream().mapToDouble(Bid::getBidAmount).sum() + lot.getStartPrice();
-        lot.setCurrentPrice(currentPrice);
-        lotRepository.save(lot);
-
-        return mapToLotDTO(lot);
+        return bid;
     }
 
     @Override
-    public List<LotDTO> getAllLots() {
-        List<Lot> lots = lotRepository.findAll();
-        return lots.stream().map(this::mapToLotDTO).collect(Collectors.toList());
+    public void startBidding(Long lotId) {
+        // Получаем лот по ID
+        Lot lot = getLotById(lotId);
+
+        // Проверяем, что лот находится в статусе "Создан"
+        if (!"Создан".equals(lot.getStatus())) {
+            throw new IllegalStateException("Торги можно начать только для лота со статусом \"Создан\".");
+        }
+
+        // Устанавливаем статус "Запущены торги"
+        lot.setStatus("Запущены торги");
     }
 
     @Override
-    public List<LotDTO> getLotsWithBids() {
-        List<Lot> lotsWithBids = lotRepository.findAll().stream()
-                .filter(lot -> !bidRepository.findByLot(lot).isEmpty())
-                .collect(Collectors.toList());
-        return lotsWithBids.stream().map(this::mapToLotDTO).collect(Collectors.toList());
+    public void finishBidding(Long lotId) {
+        // Получаем лот по ID
+        Lot lot = getLotById(lotId);
+
+        // Проверяем, что лот находится в статусе "Запущены торги"
+        if (!"Запущены торги".equals(lot.getStatus())) {
+            throw new IllegalStateException("Торги можно завершить только для лота со статусом \"Запущены торги\".");
+        }
+
+        // Устанавливаем статус "Торги окончены"
+        lot.setStatus("Торги окончены");
     }
-    private LotDTO mapToLotDTO(Lot lot) {
-        LotDTO lotDTO = new LotDTO();
-        lotDTO.setId(lot.getId());
-        lotDTO.setName(lot.getName());
-        lotDTO.setStartPrice(lot.getStartPrice());
-        lotDTO.setBidCount(bidRepository.findByLot(lot).size());
-        lotDTO.setCurrentPrice(lot.getCurrentPrice());
-        return lotDTO;
+
+    @Override
+    public List<Lot> getAllLots() {
+        return lotRepository.findAll();
+    }
+
+    @Override
+    public Lot getLotById(Long lotId) {
+        return lotRepository.findById(lotId)
+                .orElseThrow(() -> new IllegalArgumentException("Лот с ID " + lotId + " не найден."));
+    }
+
+    @Override
+    public List<Lot> getLotsByStatus(String status) {
+        return lotRepository.findAllByStatus(status);
+    }
+
+    @Override
+    public List<Bid> getAllBids() {
+        return bidRepository.findAll();
+    }
+
+    @Override
+    public Bid getBidById(Long bidId) {
+        return bidRepository.findById(bidId)
+                .orElseThrow(() -> new IllegalArgumentException("Ставка с ID " + bidId + " не найдена."));
     }
 }
 
