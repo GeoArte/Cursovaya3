@@ -80,4 +80,9 @@ public class AuctionController {
         String name = auctionService.getFirstBidder(lotId);
         return ResponseEntity.ok(name);
     }
+    @PostMapping("/lot/export")
+    public ResponseEntity<String> exportLots(@RequestBody Long lotId) {
+        String name = auctionService.exportLots();
+        return ResponseEntity.ok(name);
+    }
 }

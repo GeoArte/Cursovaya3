@@ -127,6 +127,7 @@ public class AuctionServiceImpl implements AuctionService {
         }
         return Bidder;
     }
+    @Override
     public String getFirstBidder(Long lotId){
         List<Bid> Bids = lotRepository.findById(lotId).get().getBids();
         String name = "Ставок ещё не было";
@@ -138,6 +139,13 @@ public class AuctionServiceImpl implements AuctionService {
             }
         }
         return name;
+    }
+    @Override
+    public String exportLots(){
+        List<Lot> lots = lotRepository.findAll();
+        String csvFileName = "lots_export.csv";
+        LotCSVExporter.exportLotsToCSV(lots, csvFileName);
+        return "Все лоты экспортированны";
     }
 }
 

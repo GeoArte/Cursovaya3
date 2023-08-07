@@ -14,4 +14,5 @@ public interface AuctionService {
     Bid getBidById(Long bidId);
     String getNameMaxBid(Long lotId);
     String getFirstBidder(Long lotId);
+    String exportLots();
 }
