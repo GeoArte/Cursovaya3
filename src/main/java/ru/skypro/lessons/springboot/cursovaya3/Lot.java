@@ -18,7 +18,7 @@ import java.util.List;
     @Column(name = "currentPrice")
     private double currentPrice;
     @Column(name = "status")
-    private String status;
+    private LotStatus status;
     @OneToMany(mappedBy = "lot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bid> bids = new ArrayList<>();
 
@@ -58,11 +58,11 @@ import java.util.List;
         this.bids = bids;
     }
 
-    public String getStatus() {
+    public LotStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(LotStatus status) {
         this.status = status;
     }
 }

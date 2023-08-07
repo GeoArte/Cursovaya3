@@ -4,7 +4,12 @@ package ru.skypro.lessons.springboot.cursovaya3;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static ru.skypro.lessons.springboot.cursovaya3.LotStatus.*;
 
 @Service
 public class AuctionServiceImpl implements AuctionService {
@@ -24,7 +29,7 @@ public class AuctionServiceImpl implements AuctionService {
         }
 
         // Устанавливаем статус "Создан" для нового лота
-        lot.setStatus("Создан");
+        lot.setStatus(CREATED);
 
         return lotRepository.save(lot);
     }
@@ -56,12 +61,12 @@ public class AuctionServiceImpl implements AuctionService {
         Lot lot = getLotById(lotId);
 
         // Проверяем, что лот находится в статусе "Создан"
-        if (!"Создан".equals(lot.getStatus())) {
+        if (!CREATED.equals(lot.getStatus())) {
             throw new IllegalStateException("Торги можно начать только для лота со статусом \"Создан\".");
         }
 
         // Устанавливаем статус "Запущены торги"
-        lot.setStatus("Запущены торги");
+        lot.setStatus(STARTED);
     }
 
     @Override
@@ -70,12 +75,12 @@ public class AuctionServiceImpl implements AuctionService {
         Lot lot = getLotById(lotId);
 
         // Проверяем, что лот находится в статусе "Запущены торги"
-        if (!"Запущены торги".equals(lot.getStatus())) {
+        if (!STARTED.equals(lot.getStatus())) {
             throw new IllegalStateException("Торги можно завершить только для лота со статусом \"Запущены торги\".");
         }
 
         // Устанавливаем статус "Торги окончены"
-        lot.setStatus("Торги окончены");
+        lot.setStatus(STOPPED);
     }
 
     @Override
@@ -103,6 +108,36 @@ public class AuctionServiceImpl implements AuctionService {
     public Bid getBidById(Long bidId) {
         return bidRepository.findById(bidId)
                 .orElseThrow(() -> new IllegalArgumentException("Ставка с ID " + bidId + " не найдена."));
+    }
+    @Override
+    public String getNameMaxBid(Long lotId){
+        List<Bid> Bids = lotRepository.findById(lotId).get().getBids();
+        Map<String, Integer> nameCountMap = new HashMap<>();
+        for (Bid bid : Bids){
+            String name = bid.getBidderName();
+            nameCountMap.put(name, nameCountMap.getOrDefault(name, 0) + 1);
+        }
+        String Bidder = null;
+        int maxCount = 0;
+        for (Map.Entry<String, Integer> entry : nameCountMap.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                Bidder = entry.getKey();
+                maxCount = entry.getValue();
+            }
+        }
+        return Bidder;
+    }
+    public String getFirstBidder(Long lotId){
+        List<Bid> Bids = lotRepository.findById(lotId).get().getBids();
+        String name = "Ставок ещё не было";
+        LocalDateTime date = LocalDateTime.MAX;
+        for (Bid bid : Bids){
+            if(bid.getTimestamp().isBefore(date)){
+                date = bid.getTimestamp();
+                name = bid.getBidderName();
+            }
+        }
+        return name;
     }
 }
 

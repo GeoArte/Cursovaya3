@@ -12,4 +12,6 @@ public interface AuctionService {
     List<Lot> getLotsByStatus(String status);
     List<Bid> getAllBids();
     Bid getBidById(Long bidId);
+    String getNameMaxBid(Long lotId);
+    String getFirstBidder(Long lotId);
 }

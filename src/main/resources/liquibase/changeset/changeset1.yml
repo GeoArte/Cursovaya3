@@ -29,7 +29,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: status
-                  type: varchar(20)
+                  type: smallint
                   constraints:
                     nullable: false
         - createTable:
