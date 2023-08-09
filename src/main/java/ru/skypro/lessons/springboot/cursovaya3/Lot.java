@@ -11,12 +11,13 @@ import java.util.List;
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "title")
+    private String title;
+    private String description;
     @Column(name = "startPrice")
     private double startPrice;
-    @Column(name = "currentPrice")
-    private double currentPrice;
+    @Column(name = "bidPrice")
+    private double bidPrice;
     @Column(name = "status")
     private LotStatus status;
     @OneToMany(mappedBy = "lot", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -31,11 +32,11 @@ import java.util.List;
     }
 
     public String getName() {
-        return name;
+        return title;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.title = name;
     }
 
     public void setStartPrice(double startPrice) {
@@ -43,11 +44,11 @@ import java.util.List;
     }
 
     public double getCurrentPrice() {
-        return currentPrice;
+        return bidPrice;
     }
 
     public void setCurrentPrice(double currentPrice) {
-        this.currentPrice = currentPrice;
+        this.bidPrice = currentPrice;
     }
 
     public List<Bid> getBids() {
@@ -64,5 +65,19 @@ import java.util.List;
 
     public void setStatus(LotStatus status) {
         this.status = status;
+    }
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
