@@ -45,6 +45,7 @@ public class AuctionController {
     public ResponseEntity<Void> finishBidding(@PathVariable Long lotId) {
         auctionService.finishBidding(lotId);
         return ResponseEntity.ok().build();
+
     }
 
     @GetMapping("/lot")
