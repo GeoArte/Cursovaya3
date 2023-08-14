@@ -4,23 +4,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.lessons.springboot.cursovaya3.AuctionService;
 import ru.skypro.lessons.springboot.cursovaya3.Bid;
+import ru.skypro.lessons.springboot.cursovaya3.DTO.LotDTO;
 import ru.skypro.lessons.springboot.cursovaya3.Lot;
+import ru.skypro.lessons.springboot.cursovaya3.LotRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auction")
 public class AuctionController {
     private final AuctionService auctionService;
+    private final LotRepository lotRepository;
 
-    public AuctionController(AuctionService auctionService) {
+    public AuctionController(AuctionService auctionService, LotRepository lotRepository) {
         this.auctionService = auctionService;
+        this.lotRepository = lotRepository;
     }
 
     @PostMapping("/lot")
-    public ResponseEntity<Lot> createLot(@RequestBody Lot lot) {
+    public ResponseEntity<LotDTO> createLot(@RequestBody Lot lot) {
         Lot createdLot = auctionService.createLot(lot);
-        return ResponseEntity.ok(createdLot);
+        LotDTO lotDTO = convertToDTO(createdLot);
+        return ResponseEntity.ok(lotDTO);
     }
 
     @PostMapping("/lots/{lotId}/bid")
@@ -42,21 +48,28 @@ public class AuctionController {
     }
 
     @GetMapping("/lot")
-    public ResponseEntity<List<Lot>> getAllLots() {
+    public ResponseEntity<List<LotDTO>> getAllLots() {
         List<Lot> lots = auctionService.getAllLots();
-        return ResponseEntity.ok(lots);
+        List<LotDTO> lotDTOs = lots.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(lotDTOs);
     }
 
     @GetMapping("/lots/{id}")
-    public ResponseEntity<Lot> getLotById(@PathVariable Long lotId) {
-        Lot lot = auctionService.getLotById(lotId);
-        return ResponseEntity.ok(lot);
+    public ResponseEntity<LotDTO> getLotById(@PathVariable Long id) {
+        Lot lot = auctionService.getLotById(id);
+        LotDTO lotDTO = convertToDTO(lot);
+        return ResponseEntity.ok(lotDTO);
     }
 
     @GetMapping("/lots/findByStatus")
-    public ResponseEntity<List<Lot>> getLotsByStatus(@RequestParam String status) {
+    public ResponseEntity<List<LotDTO>> getLotsByStatus(@RequestParam String status) {
         List<Lot> lots = auctionService.getLotsByStatus(status);
-        return ResponseEntity.ok(lots);
+        List<LotDTO> lotDTOs = lots.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(lotDTOs);
     }
 
     @GetMapping("/bids")
@@ -70,19 +83,33 @@ public class AuctionController {
         Bid bid = auctionService.getBidById(bidId);
         return ResponseEntity.ok(bid);
     }
-    @PostMapping("/lot/{id}/frequent")
-    public ResponseEntity<String> getNameMaxBid(@RequestBody Long lotId) {
-        String name = auctionService.getNameMaxBid(lotId);
+
+    @PostMapping("/lots/{id}/frequent")
+    public ResponseEntity<String> getNameMaxBid(@PathVariable Long id) {
+        String name = auctionService.getNameMaxBid(id);
         return ResponseEntity.ok(name);
     }
-    @PostMapping("/lot/{id}/first")
-    public ResponseEntity<String> getFirstBidder(@RequestBody Long lotId) {
-        String name = auctionService.getFirstBidder(lotId);
+
+    @PostMapping("/lots/{id}/first")
+    public ResponseEntity<String> getFirstBidder(@PathVariable Long id) {
+        String name = auctionService.getFirstBidder(id);
         return ResponseEntity.ok(name);
     }
+
     @PostMapping("/lot/export")
-    public ResponseEntity<String> exportLots(@RequestBody Long lotId) {
-        String name = auctionService.exportLots();
-        return ResponseEntity.ok(name);
+    public ResponseEntity<String> exportLots() {
+        String message = auctionService.exportLots();
+        return ResponseEntity.ok(message);
+    }
+
+    private LotDTO convertToDTO(Lot lot) {
+        LotDTO dto = new LotDTO();
+        dto.setId(lot.getId());
+        dto.setTitle(lot.getTitle());
+        dto.setStartPrice(lot.getStartPrice());
+        dto.setCurrentPrice(lot.getCurrentPrice());
+        dto.setStatus(lot.getStatus());
+        dto.setBidCount(lotRepository.countBidsByLotId(lot.getId()));
+        return dto;
     }
 }
