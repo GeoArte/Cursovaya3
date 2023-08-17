@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.lessons.springboot.cursovaya3.AuctionService;
 import ru.skypro.lessons.springboot.cursovaya3.Bid;
+import ru.skypro.lessons.springboot.cursovaya3.DTO.BidDTO;
 import ru.skypro.lessons.springboot.cursovaya3.DTO.LotDTO;
 import ru.skypro.lessons.springboot.cursovaya3.Lot;
 import ru.skypro.lessons.springboot.cursovaya3.LotRepository;
@@ -30,9 +31,10 @@ public class AuctionController {
     }
 
     @PostMapping("/lots/{lotId}/bid")
-    public ResponseEntity<Bid> placeBid(@PathVariable Long lotId, @RequestBody Bid bid) {
+    public ResponseEntity<BidDTO> placeBid(@PathVariable Long lotId, @RequestBody Bid bid) {
         Bid placedBid = auctionService.placeBid(lotId, bid);
-        return ResponseEntity.ok(placedBid);
+        BidDTO bidDTO = convertToDTOBid(placedBid);
+        return ResponseEntity.ok(bidDTO);
     }
 
     @PutMapping("/lots/{lotId}/start")
@@ -74,15 +76,19 @@ public class AuctionController {
     }
 
     @GetMapping("/bids")
-    public ResponseEntity<List<Bid>> getAllBids() {
+    public ResponseEntity<List<BidDTO>> getAllBids() {
         List<Bid> bids = auctionService.getAllBids();
-        return ResponseEntity.ok(bids);
+        List<BidDTO> bidDTOs = bids.stream()
+                .map(this::convertToDTOBid)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(bidDTOs);
     }
 
     @GetMapping("/bids/{bidId}")
-    public ResponseEntity<Bid> getBidById(@PathVariable Long bidId) {
+    public ResponseEntity<BidDTO> getBidById(@PathVariable Long bidId) {
         Bid bid = auctionService.getBidById(bidId);
-        return ResponseEntity.ok(bid);
+        BidDTO bidDTO = convertToDTOBid(bid);
+        return ResponseEntity.ok(bidDTO);
     }
 
     @PostMapping("/lots/{id}/frequent")
@@ -111,6 +117,15 @@ public class AuctionController {
         dto.setCurrentPrice(lot.getCurrentPrice());
         dto.setStatus(lot.getStatus());
         dto.setBidCount(lotRepository.countBidsByLotId(lot.getId()));
+        return dto;
+    }
+    private BidDTO convertToDTOBid(Bid bid) {
+        BidDTO dto = new BidDTO();
+        dto.setId(bid.getId());
+        dto.setBidAmount(bid.getBidAmount());
+        dto.setBidderName(bid.getBidderName());
+        dto.setLot(bid.getLot());
+        dto.setTimestamp(bid.getTimestamp());
         return dto;
     }
 }
