@@ -2,6 +2,8 @@ package ru.skypro.lessons.springboot.cursovaya3;
 
 
 import org.springframework.stereotype.Service;
+import ru.skypro.lessons.springboot.cursovaya3.DTO.CreateLotDto;
+import ru.skypro.lessons.springboot.cursovaya3.DTO.LotDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,11 +24,16 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public Lot createLot(Lot lot) {
+    public Lot createLot(CreateLotDto lotDTO) {
         // Проверяем, что стартовая цена не отрицательная
-        if (lot.getStartPrice() < 0) {
+        if (lotDTO.getStartPrice() < 0) {
             throw new IllegalArgumentException("Стартовая цена должна быть положительной.");
         }
+        Lot lot = new Lot();
+        lot.setDescription(lotDTO.getDescription());
+        lot.setName(lotDTO.getTitle());
+        lot.setStartPrice(lotDTO.getStartPrice());
+        lot.setCurrentPrice(lotDTO.getBidPrice());
 
         // Устанавливаем статус "Создан" для нового лота
         lot.setStatus(CREATED);

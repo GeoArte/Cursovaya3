@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.lessons.springboot.cursovaya3.AuctionService;
 import ru.skypro.lessons.springboot.cursovaya3.Bid;
 import ru.skypro.lessons.springboot.cursovaya3.DTO.BidDTO;
+import ru.skypro.lessons.springboot.cursovaya3.DTO.CreateLotDto;
 import ru.skypro.lessons.springboot.cursovaya3.DTO.LotDTO;
 import ru.skypro.lessons.springboot.cursovaya3.Lot;
 import ru.skypro.lessons.springboot.cursovaya3.LotRepository;
@@ -24,7 +25,7 @@ public class AuctionController {
     }
 
     @PostMapping("/lot")
-    public ResponseEntity<LotDTO> createLot(@RequestBody Lot lot) {
+    public ResponseEntity<LotDTO> createLot(@RequestBody CreateLotDto lot) {
         Lot createdLot = auctionService.createLot(lot);
         LotDTO lotDTO = convertToDTO(createdLot);
         return ResponseEntity.ok(lotDTO);
