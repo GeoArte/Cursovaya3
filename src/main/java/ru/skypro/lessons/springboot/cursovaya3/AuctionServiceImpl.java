@@ -52,7 +52,8 @@ public class AuctionServiceImpl implements AuctionService {
         if (currentPrice != null && bidDTO.getBidAmount() <= 0) {
             throw new IllegalArgumentException("Ставка должна быть выше текущей цены лота.");
         }
-        if (lot.getStatus() != STARTED) {
+        boolean status = lot.getStatus().equals(STARTED);
+        if (!status) {
             throw new IllegalArgumentException("На данный лот нельзя делать ставки");
         }
         bid.setBidAmount(bidDTO.getBidAmount());
