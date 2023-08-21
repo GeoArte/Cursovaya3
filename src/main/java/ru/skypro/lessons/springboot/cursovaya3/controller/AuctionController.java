@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.lessons.springboot.cursovaya3.AuctionService;
 import ru.skypro.lessons.springboot.cursovaya3.Bid;
 import ru.skypro.lessons.springboot.cursovaya3.DTO.BidDTO;
-import ru.skypro.lessons.springboot.cursovaya3.DTO.CreateLotDto;
-import ru.skypro.lessons.springboot.cursovaya3.DTO.LotDTO;
+import ru.skypro.lessons.springboot.cursovaya3.DTO.*;
 import ru.skypro.lessons.springboot.cursovaya3.Lot;
 import ru.skypro.lessons.springboot.cursovaya3.LotRepository;
 
@@ -32,7 +31,7 @@ public class AuctionController {
     }
 
     @PostMapping("/lots/{lotId}/bid")
-    public ResponseEntity<BidDTO> placeBid(@PathVariable Long lotId, @RequestBody Bid bid) {
+    public ResponseEntity<BidDTO> placeBid(@PathVariable Long lotId, @RequestBody CreateBidDTO bid) {
         Bid placedBid = auctionService.placeBid(lotId, bid);
         BidDTO bidDTO = convertToDTOBid(placedBid);
         return ResponseEntity.ok(bidDTO);

@@ -2,10 +2,10 @@ package ru.skypro.lessons.springboot.cursovaya3;
 
 
 import org.springframework.stereotype.Service;
-import ru.skypro.lessons.springboot.cursovaya3.DTO.CreateLotDto;
-import ru.skypro.lessons.springboot.cursovaya3.DTO.LotDTO;
+import ru.skypro.lessons.springboot.cursovaya3.DTO.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -42,15 +42,22 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public Bid placeBid(Long lotId, Bid bid) {
+    public Bid placeBid(Long lotId, CreateBidDTO bidDTO) {
         // Получаем лот по ID
         Lot lot = getLotById(lotId);
+        Bid bid = new Bid();
 
         // Проверяем, что ставка больше текущей цены лота
         Double currentPrice = lot.getCurrentPrice();
-        if (currentPrice != null && bid.getBidAmount() <= 0) {
+        if (currentPrice != null && bidDTO.getBidAmount() <= 0) {
             throw new IllegalArgumentException("Ставка должна быть выше текущей цены лота.");
         }
+        if (lot.getStatus() != STARTED) {
+            throw new IllegalArgumentException("На данный лот нельзя делать ставки");
+        }
+        bid.setBidAmount(bidDTO.getBidAmount());
+        bid.setBidderName(bidDTO.getBidderName());
+        bid.setTimestamp(LocalDateTime.now());
 
         // Устанавливаем лот для ставки
         bid.setLot(lot);
