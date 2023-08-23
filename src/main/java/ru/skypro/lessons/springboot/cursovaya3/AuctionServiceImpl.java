@@ -48,8 +48,8 @@ public class AuctionServiceImpl implements AuctionService {
         Bid bid = new Bid();
 
         // Проверяем, что ставка больше текущей цены лота
-        Double currentPrice = lot.getCurrentPrice();
-        if (currentPrice != null && bidDTO.getBidAmount() <= 0) {
+        double currentPrice = lot.getCurrentPrice();
+        if (currentPrice > bidDTO.getBidAmount()) {
             throw new IllegalArgumentException("Ставка должна быть выше текущей цены лота.");
         }
         boolean status = lot.getStatus().equals(STARTED);
@@ -66,6 +66,7 @@ public class AuctionServiceImpl implements AuctionService {
         // Сохраняем ставку и обновляем текущую цену лота
         bidRepository.save(bid);
         lot.setCurrentPrice(bid.getBidAmount());
+        lotRepository.save(lot);
 
         return bid;
     }
@@ -82,6 +83,7 @@ public class AuctionServiceImpl implements AuctionService {
 
         // Устанавливаем статус "Запущены торги"
         lot.setStatus(STARTED);
+        lotRepository.save(lot);
     }
 
     @Override
@@ -96,6 +98,7 @@ public class AuctionServiceImpl implements AuctionService {
 
         // Устанавливаем статус "Торги окончены"
         lot.setStatus(STOPPED);
+        lotRepository.save(lot);
     }
 
     @Override
