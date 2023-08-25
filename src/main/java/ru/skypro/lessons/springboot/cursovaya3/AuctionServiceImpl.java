@@ -64,11 +64,10 @@ public class AuctionServiceImpl implements AuctionService {
         bid.setLot(lot);
 
         // Сохраняем ставку и обновляем текущую цену лота
-        bidRepository.save(bid);
         lot.setCurrentPrice(bid.getBidAmount());
         lotRepository.save(lot);
 
-        return bid;
+        return bidRepository.save(bid);
     }
 
     @Override

@@ -47,10 +47,10 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: bidAmount
-                  type: double
-                  constraints:
-                    nullable: false
+                name: bidamount
+                type: double
+                constraints:
+                  nullable: false
               - column:
                   name: lot_id
                   type: bigint

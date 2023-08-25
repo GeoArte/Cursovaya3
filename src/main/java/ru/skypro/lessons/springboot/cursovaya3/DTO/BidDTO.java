@@ -21,10 +21,6 @@ public class BidDTO {
         return bidAmount;
     }
 
-    public Lot getLot() {
-        return lot;
-    }
-
     public void setLot(Lot lot) {
         this.lot = lot;
     }
