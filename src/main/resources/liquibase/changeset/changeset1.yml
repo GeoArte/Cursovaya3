@@ -4,40 +4,66 @@ databaseChangeLog:
       author: developer # имя разработчика, который добавил набор изменений
       changes: # список изменений в этом наборе
         - createTable: # команда liquibase — создает таблицу
-            tableName: Lot # название таблицы
+            tableName: lot # название таблицы
             columns: # колонки к данной таблице
               - column: # колонка
                   name: id # название колонки
-                  type: Long; # тип
+                  type: bigint # тип
                   autoIncrement: true # признак автоинкремента колонки
                   constraints: # ограничения колонки
                     primaryKey: true
               - column:
-                  name: name
-                  type: varchar
+                  name: title
+                  type: varchar(20)
                   constraints:
                     nullable: false
               - column:
-                  name: startPrice
+                  name: description
+                  type: varchar(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_price
                   type: double
                   constraints:
                     nullable: false
               - column:
-                  name: currentPrice
+                  name: bid_price
                   type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: smallint
                   constraints:
                     nullable: false
         - createTable:
-            tableName: Bid
+            tableName: bid
             columns:
               - column:
                   name: id
-                  type: int
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
               - column:
-                  name: bidAmount
+                  name: bidamount
                   type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lot_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_key_lot
+                    references: lot(id)
+              - column:
+                  name: bidder_name
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timestamp
+                  type: TIMESTAMP
                   constraints:
                     nullable: false

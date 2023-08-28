@@ -3,18 +3,18 @@ package ru.skypro.lessons.springboot.cursovaya3;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface LotRepository extends JpaRepository<Lot, Long> {
-    List<Lot> findByStatus(String status);
+    List<Lot> findAll();
 
-    List<Lot> findByCurrentPriceGreaterThan(double minCurrentPrice);
+    List<Lot> findAllByStatus(String status);
 
-    List<Lot> findByCurrentPriceBetween(double minCurrentPrice, double maxCurrentPrice);
+    Lot findById(long id);
 
-    List<Lot> findByNameContainingIgnoreCase(String keyword);
-
-    @Query(value = "SELECT COUNT(*) FROM Bid WHERE lot_id = :lotId", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM bid WHERE lot_id = :lotId", nativeQuery = true)
     int countBidsByLotId(@Param("lotId") Long lotId);
 }

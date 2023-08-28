@@ -1,22 +1,16 @@
-package ru.skypro.lessons.springboot.cursovaya3;
+package ru.skypro.lessons.springboot.cursovaya3.DTO;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
+import ru.skypro.lessons.springboot.cursovaya3.Lot;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "bid")public class Bid {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BidDTO {
     private Long id;
-
-    @ManyToOne
     private Lot lot;
-    @Column(name = "bidamount")
     private double bidAmount;
-    @Column(nullable = false)
     private LocalDateTime timestamp;
-    @Column(nullable = false)
     private String bidderName;
 
     public Long getId() {
@@ -25,10 +19,6 @@ import java.time.LocalDateTime;
 
     public double getBidAmount() {
         return bidAmount;
-    }
-
-    public Lot getLot() {
-        return lot;
     }
 
     public void setLot(Lot lot) {
@@ -53,5 +43,9 @@ import java.time.LocalDateTime;
 
     public String getBidderName() {
         return bidderName;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
